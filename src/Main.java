@@ -30,30 +30,34 @@ public class Main {
     }
 
     /**
-     * Функция для проверки вводимой строки с применением регулярных выражений
-     * @param expr - вводимая строка
-     * @throws InvalidTypeException - в случае, если строка не соответствует нужному формату
+     * Основная функция; проверяет ввод и с помощью метода compute производит вычисления
+     * @param input - вводимое выражение
+     * @return - результат вычисления
+     * @throws InvalidTypeException - в случае, если формат ввода не подхоодит
      */
-    static void parse_expr(String expr) throws InvalidTypeException {
+    public static String calc(String input) throws InvalidTypeException {
         String romanStr = "([iIvVxX])+\\s?[-+*/]\\s?([iIvVxX])+";
         String arabStr = "^\\d?\\s?[-+/*]\\s?\\d?";
-        if (expr.matches(romanStr)) {
-            compute(expr, false);
+        String out;
+        if (input.matches(romanStr)) {
+            out = compute(input, false);
         }
-        else if (expr.matches(arabStr)) {
-            compute(expr, true);
+        else if (input.matches(arabStr)) {
+            out = compute(input, true);
         }
         else throw new InvalidTypeException("Cannot match pattern");
+
+        return out;
     }
 
     /**
-     * Функция для выполнения арифметических действий
-     * @param str - введенное выражение
-     * @param isArabic - флаг, который говорит, в какой записи данное выражение
-     * @throws ArithmeticException - в случае, если в ходе работы с римскими числами выходит
-     * число <= 0
+     * Функция для расчета выражения
+     * @param str - вводимое выражение
+     * @param isArabic - флаг, указывающий, в каком формате записано выражение
+     * @return - результат вычислений в формате String
+     * @throws ArithmeticException - в случае, если римское число выходит за рамки значений
      */
-    static void compute(String str, boolean isArabic) throws ArithmeticException {
+    static String compute(String str, boolean isArabic) throws ArithmeticException {
         String[] expr = str.split(" ");
         int result = 0;
         int num1;
@@ -75,14 +79,14 @@ public class Main {
         }
 
         if (isArabic) {
-            System.out.println(result);
+            return Integer.toString(result);
         }
         else {
             // Так как в римской записи число находится в рамках от 1 до 3999
             // (в контексте задачи - от 1 до 100), нужно проверить,
             // не вышел ли итоговый результат за эти рамки
             if ((result >= 1) && (result < 100)) {
-                System.out.println(to_roman(result));
+                return to_roman(result);
             }
             else throw new ArithmeticException("Roman number out of range");
         }
@@ -90,7 +94,7 @@ public class Main {
     public static void main(String[] args) {
         String expression = in.nextLine();
         try {
-            parse_expr(expression);
+            System.out.println(calc(expression));
         }
         catch (InvalidTypeException | ArithmeticException ex) {
             System.out.println(ex.getMessage());
